@@ -40,8 +40,6 @@ Status NextAdjVex(ALGraph G,int v,int w);
 
 
 int main(){
-	ArcNode *p;
-	int v;
 	ALGraph G;
 	CreateGraph(&G);
 	DFSTraverse(G);
@@ -78,7 +76,7 @@ void DFSTraverse(ALGraph G ){
 	int v;
 	for(v=0;v<G.vexnum;++v) visited[v] = FALSE;
 	for(v=0;v<G.vexnum;++v) 
-		if(!visited[v]) DFS(G,v);
+		if(!visited[v]) { DFS(G,v);   printf("\n");}
 }
 void DFS(ALGraph G,int v){
 	int w;
