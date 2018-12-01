@@ -1,0 +1,115 @@
+# shujujiegou
+#include<stdio.h>
+#include<stdlib.h>
+#include<malloc.h>
+
+#define TRUE         1
+#define FALSE        0
+#define OK           1
+#define INFEASIBLE  -1
+#define OVERFLOW    -2
+#define ERROR       -4
+#define MAX 20
+
+#define MAX_VERTEX_NUM   20
+typedef int Status;
+typedef char VertexType;
+typedef struct ArcCell{
+	int  adj;
+  //InfoType  *info;   //存放该弧相关信息的指针
+}ArcCell, AdjMatrix[MAX_VERTEX_NUM][MAX_VERTEX_NUM];
+
+typedef struct {
+	VertexType vexs[MAX_VERTEX_NUM]; //顶点向量
+	AdjMatrix  arcs;
+	int        vexnum,arcnum;
+	//GraphKind  kind;  图的种类标志
+}MGraph;
+bool visited[MAX]; //
+void DFSTraverse(MGraph G );
+void DFS(MGraph G,int v);
+Status FirstAdjVex(MGraph G,int v);
+Status NextAdjVex(MGraph G,int v,int w);
+
+Status CreateUDN(MGraph *G);
+Status LocateVex(MGraph G,char v);
+
+
+void main(){
+	int i,j;
+	MGraph M;
+	CreateUDN(&M);
+	for(i=0;i<M.vexnum;++i)  {
+		for(j=0;j<M.vexnum;++j)  printf("%d ",M.arcs[i][j].adj);
+		printf("\n");
+	}
+	DFSTraverse(M);
+
+
+}
+
+
+
+
+
+Status CreateUDN(MGraph *G){
+	int i,j,k;
+	char v1,v2;
+	printf("请输入该图的顶点数,弧数:");
+	scanf("%d%d",&G->vexnum,&G->arcnum);
+	getchar();
+	printf("请输入顶点的信息:");
+	for(i=0;i<G->vexnum;++i)  { scanf("%c",&G->vexs[i]); }
+	getchar();
+	for(i=0;i<G->vexnum;++i)  
+		for(j=0;j<G->vexnum;++j)  G->arcs[i][j].adj = 0; //先全部重置为0
+	for(k=0;k<G->arcnum;++k){
+		printf("请输入有连接的两条边(这里为无向图,例如AB):\n");
+		scanf("%c%c",&v1,&v2);
+		getchar();
+		i = LocateVex(*G,v1);   j = LocateVex(*G,v2);
+		G->arcs[i][j].adj = 1;
+		G->arcs[j][i].adj = G->arcs[i][j].adj;
+	}
+	return OK;
+}
+
+Status LocateVex(MGraph G,char v){
+	int i;
+	for(i=0;i<G.vexnum;++i){
+		if(v == G.vexs[i])
+			break;
+	}
+    return i;
+}
+void DFSTraverse(MGraph G ){
+	int v;
+	for(v=0;v<G.vexnum;++v) visited[v] = FALSE;
+	for(v=0;v<G.vexnum;++v) 
+		if(!visited[v]) { DFS(G,v);   printf("\n");}
+}
+void DFS(MGraph G,int v){
+	int w;
+	visited[v] = TRUE;  
+	printf("%c",G.vexs[v]);
+	for(w = FirstAdjVex(G,v); w >= 0; w = NextAdjVex(G,v,w))
+	{
+		if(!visited[w])  DFS(G,w);
+	}
+}
+Status FirstAdjVex(MGraph G,int v){
+	int i;
+	for(i=0;i<G.vexnum;++i)
+		if(G.arcs[v][i].adj == 1)
+			break;
+	if(i>=G.vexnum) return -1;
+	else           return i;
+}
+Status NextAdjVex(MGraph G,int v,int w){
+	int i;
+	for(i=w+1;i<G.vexnum;++i)
+	if(G.arcs[v][i].adj == 1)
+		break;
+	if(i>=G.vexnum) return -1;
+	else           return i;
+}
