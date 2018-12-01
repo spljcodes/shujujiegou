@@ -1,0 +1,72 @@
+# shujujiegou
+#include<stdio.h>
+#include<stdlib.h>
+#include<malloc.h>
+#define STACK_INIT_SIZE  100
+#define STACKINCREMENT    10
+
+#define TRUE         1
+#define FALSE        0
+#define OK           1
+#define INFEASIBLE  -1
+#define OVERFLOW    -2
+
+typedef int Status;
+typedef char SElemType;
+typedef struct {
+	SElemType   *base;
+	SElemType    *top;
+	int        stacksize;
+}SqStack;
+Status InitStack(SqStack  *S);
+Status Push(SqStack  *S , SElemType  e);
+Status Pop (SqStack  *S , SElemType *e);
+Status GetTop(SqStack S , SElemType *e);
+Status StackLength(SqStack S);
+int main(){
+	int flag = 1;
+	char ch,e;
+	SqStack  ss;
+	InitStack(&ss);
+	printf("请输入符号");
+	ch = getchar();
+	while(ch!='\n' && flag){
+		switch(ch){                         
+			case '[':
+			case '(':
+			case '{':
+					 Push(&ss,ch);
+					 break;
+			case ')':
+				GetTop(ss,&e);
+				if(!(ss.top == ss.base) &&  e == '(')
+					Pop(&ss,&e);
+				else flag = 0;
+				break;
+			case ']':
+				GetTop(ss,&e);
+				if(!(ss.top ==  ss.base) && e == '[')
+					Pop(&ss,&e);
+				else flag = 0;
+				break;
+			case '}':
+				GetTop(ss,&e);
+				if(!(ss.top ==  ss.base) && e == '{')
+					Pop(&ss,&e);
+				else flag = 0;
+				break;
+
+		}
+		ch = getchar();
+	}
+	
+	if(ss.top == ss.base) printf("括号检验正确\n");
+	else printf("括号检验错误\n");
+	return 0;
+}
+
+
+
+Status StackLength(SqStack S){
+	return S.top-S.base;
+}
